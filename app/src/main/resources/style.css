@@ -1,0 +1,16 @@
+.roundButton{
+
+    -fx-background-color: white;
+    -fx-text-fill: white;
+
+    -fx-border-color: black;
+    -fx-border-width: 2;
+
+    -fx-background-radius: 100;
+    -fx-border-radius: 100;
+
+    -fx-padding: 0;  
+}
+.roundButton:hover{
+    -fx-background-color: lightgrey;
+}
