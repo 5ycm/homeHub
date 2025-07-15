@@ -22,6 +22,8 @@ public class App extends Application {
         VBox vbox = new VBox(20); // 20px spacing
         vbox.setAlignment(Pos.CENTER);   // Vertical center alignment
         vbox.getChildren().addAll(button1);
+        vbox.setPrefWidth(150);
+        vbox.setStyle("-fx-background-color: #42f560; ");
 
         // Put VBox on the right side of the screen using a BorderPane
         BorderPane root = new BorderPane();
