@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class ImageButton extends Button {
+    boolean isOn = false;
     public ImageButton(String imagePath) {
         if (imagePath == null) {
             throw new IllegalArgumentException("imagePath was null in ImageButton Constructor");
