@@ -18,20 +18,38 @@ public class WeatherFetcher {
 
     public WeatherData fetchWeather() throws Exception {
         String pointsURL = "https://api.weather.gov/points/" + lat + "," + lon;
-        String pointsJson = getJson(pointsURL); //performs le get request to get points urls :)
-        String forecastUrl = extractValue(pointsJson, "\"forecast\":\"", "\""); //get the forecast url to call
-        if (forecastUrl.isEmpty()) {
-            throw new Exception("Forecast URL not found from getJson(url)");
-        }
+        String pointsJson = getJson(pointsURL);
+    
+        // 1. Get observationStations URL
+        String observationStations = extractValue(pointsJson, "\"observationStations\": \"", "\"");
+        if (observationStations.isEmpty()) throw new Exception("observationStations URL not found");
+        System.out.println(observationStations);
+    
+        // 2. Get observationStations JSON and extract first station ID
+        String stationsJson = getJson(observationStations);
+        String firstStationId = extractValue(stationsJson, "\"stationIdentifier\": \"", "\"");
+        System.out.println("First station: " + firstStationId);
+    
+        // 3. Get latest observation for that station
+        String observationUrl = "https://api.weather.gov/stations/" + firstStationId + "/observations/latest";
+        String observationJson = getJson(observationUrl);
+    
+        // 4. Extract temperature (Celsius) and convert to Fahrenheit
+        String tempCStr = extractValue(observationJson, "\"temperature\": ", "}");
+        System.out.println(tempCStr);
+        String CStr = extractValue(tempCStr, "\"value\": ", ",");
 
-        String forecastJson = getJson(forecastUrl); // get request the forcast url.
-        String periods = extractValue(forecastJson, "\"periods\":[{", "}]"); //extracts the period json values
-
-        int temperatureF = Integer.parseInt(extractValue(periods, "\"temperature\":", ",")); // extract temperature from periods
-        String forecast = extractValue(periods, "\"shortForecast\":\"", "\""); //extract forecast from periods
-
-        return new WeatherData(forecast, temperatureF);
+    
+        System.out.print(CStr);
+        double tempC = Double.parseDouble(CStr.trim());
+        int temperatureF = (int) Math.round((tempC * 9 / 5) + 32);
+    
+        System.out.println("Temperature: " + temperatureF + "°F");
+    
+        return new WeatherData(firstStationId, temperatureF);
     }
+    
+    
 
     private String getJson(String urlStr) throws Exception {
         URL url = new URL(urlStr);
@@ -42,8 +60,6 @@ public class WeatherFetcher {
         InputStream is = con.getInputStream();
         byte[] data = is.readAllBytes();
         is.close();
-        con.disconnect();
-
         return new String(data, StandardCharsets.UTF_8);
     }
 
