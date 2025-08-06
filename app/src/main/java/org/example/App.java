@@ -24,7 +24,7 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         info = new information();
         wF = new WeatherFetcher(info.lati, info.lon, info.email);
-        updateWeather(); // updates weather var
+        weather = updateWeather(); // updates weather var
         ses = Executors.newSingleThreadScheduledExecutor();
         ses.scheduleAtFixedRate(() -> {
             updateWeather();
@@ -43,7 +43,7 @@ public class App extends Application {
         ImageButton testt = new ImageButton("/icon.png");
         VBox Tvbox = new VBox(10); 
         Tvbox.setAlignment(Pos.CENTER);
-        Tvbox.getChildren().add(testt);
+        //Tvbox.getChildren().add(testt); added below
 
         VBox Bvbox = new VBox(10); 
         Bvbox.setAlignment(Pos.CENTER);
@@ -56,9 +56,18 @@ public class App extends Application {
         Tvbox.prefHeightProperty().bind(separatorBox.heightProperty().multiply(0.6));
         Bvbox.prefHeightProperty().bind(separatorBox.heightProperty().multiply(0.4));
 
-        separatorBox.getChildren().addAll(Tvbox, Bvbox);
 
-        //Label tempLabel = new Label((weather.temperatureF == null) ? "loading" : temperatureF);
+        separatorBox.getChildren().addAll(Tvbox, Bvbox);
+        Label tempLabel;
+        if(weather!=null){
+            tempLabel = new Label(weather.temperatureF + " F");
+        }
+        else{
+            tempLabel = new Label("Loading...");
+        }
+
+        Tvbox.getChildren().addAll(tempLabel, testt);
+
 
         BorderPane root = new BorderPane();
         root.setRight(separatorBox);
